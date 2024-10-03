@@ -1,0 +1,132 @@
+{
+	email nat@natwelch.com
+	# debug
+
+	admin off
+
+	order authenticate before respond
+	order authorize before basicauth
+
+	acme_eab {
+		key_id {env.ACME_KEY_ID}
+		mac_key {env.ACME_MAC_KEY}
+	}
+
+	security {
+		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
+
+		authentication portal myportal {
+			crypto default token lifetime 3600
+			crypto key sign-verify {env.JWT_SHARED_KEY}
+			cookie domain newyork.welch.io
+			enable identity provider github
+
+			transform user {
+				exact match sub github.com/icco
+				action add role authp/admin
+				action add role admin
+			}
+
+			# https://icons8.com/line-awesome
+			ui {
+				links {
+					"Archive Team Warrior" /archive/ icon "las la-dragon"
+					"Darkstat" /darkstat/ icon "las la-chart-pie"
+					"Files" /files/ icon "las la-sitemap"
+					"FlightAware" /skyaware/ icon "las la-plane-departure"
+					"Kavita" /kavita/ icon "las la-book"
+					"Lidarr" /lidarr/ icon "las la-headphones"
+					"Prowlarr" /prowlarr/ icon "las la-paw"
+					"Radarr" /radarr/ icon "las la-film"
+					"Readarr" /readarr/ icon "las la-book"
+					"Sabnzbd" /sabnzbd/ icon "las la-download"
+					"Sonarr" /sonarr/ icon "las la-tv"
+				}
+			}
+		}
+
+		authorization policy mypolicy {
+			set auth url {env.OAUTH_AUTH_URL}
+			crypto key verify {env.JWT_SHARED_KEY}
+			allow roles authp/admin authp/user
+			validate bearer header
+			inject headers with claims
+		}
+	}
+}
+
+newyork.welch.io {
+	route /auth* {
+		authenticate with myportal
+	}
+
+	route /healthz {
+		respond "ok."
+	}
+
+	route /radarr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:7878
+	}
+
+	route /prowlarr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:9696
+	}
+
+	route /sonarr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8989
+	}
+
+	route /lidarr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8686
+	}
+
+	route /readarr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8787
+	}
+
+	route /sabnzbd/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8080
+	}
+
+	route /kavita/* {
+		reverse_proxy rope.local:5000
+	}
+
+	route /darkstat/* {
+		authorize with mypolicy
+		uri strip_prefix /darkstat
+		reverse_proxy localhost:666
+	}
+
+	route /archive/* {
+		authorize with mypolicy
+		uri strip_prefix /archive
+		reverse_proxy rope.local:8001
+	}
+
+	route /skyaware/* {
+		authorize with mypolicy
+		reverse_proxy 192.168.1.51:80
+	}
+
+	route /files/* {
+		authorize with mypolicy
+		uri strip_prefix /files
+
+		file_server {
+			root /media/gallon/
+			hide .* @*
+			browse
+		}
+	}
+
+	route {
+		redir https://{hostport}/auth 302
+	}
+}
