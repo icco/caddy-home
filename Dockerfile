@@ -1,3 +1,4 @@
+# https://github.com/caddyserver/caddy/releases
 ARG CADDY_VERSION=2.8.4
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
