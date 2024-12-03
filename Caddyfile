@@ -65,6 +65,8 @@
 }
 
 newyork.welch.io {
+	log
+
 	route /auth* {
 		authenticate with myportal
 	}
