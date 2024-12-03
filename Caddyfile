@@ -12,6 +12,11 @@
 		mac_key {env.ACME_MAC_KEY}
 	}
 
+	log default {
+		output stdout
+		format json
+	}
+
 	security {
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
 
