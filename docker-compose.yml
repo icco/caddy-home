@@ -10,7 +10,7 @@ services:
       - ACME_KEY_ID=test
       - ACME_MAC_ID=test
       - JWT_SHARED_KEY=test
-      - OAUTH_AUTH_URL=http://localhost:8080/auth/oauth2/github
+      - OAUTH_AUTH_URL=http://localhost/auth/oauth2/github
       - OAUTH_CLIENT_ID=test
       - OAUTH_CLIENT_SECRET=test
     networks:
