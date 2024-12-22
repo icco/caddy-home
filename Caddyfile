@@ -36,10 +36,13 @@
 				action add role admin
 			}
 
-			# https://icons8.com/line-awesome
 			ui {
+        # https://docs.authcrunch.com/docs/authenticate/ui-features
         theme basic
+				custom css path {env.HOME}/.local/caddy/ui/custom/styles.css
+				template login {env.HOME}/.local/caddy/ui/login.template
 
+        # https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
 					"Darkstat" /darkstat/ icon "las la-chart-pie"
