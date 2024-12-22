@@ -39,7 +39,7 @@
 			ui {
 				# https://docs.authcrunch.com/docs/authenticate/ui-features
 				theme basic
-				custom css path /data/caddy/themes/custom.css
+				custom css path /srv/themes/custom.css
 
 				# https://icons8.com/line-awesome
 				links {

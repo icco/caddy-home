@@ -14,10 +14,10 @@ RUN xcaddy build ${CADDY_VERSION} \
 FROM caddy:${CADDY_VERSION}-alpine
 
 ENV CADDY_INGRESS_NETWORKS=caddy
-ENV CADDY_DOCKER_CADDYFILE_PATH=/data/caddy/Caddyfile
+ENV CADDY_DOCKER_CADDYFILE_PATH=/srv/Caddyfile
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-COPY ./Caddyfile /data/caddy/Caddyfile
-COPY ./themes /data/caddy/themes
+COPY ./Caddyfile /srv/Caddyfile
+COPY ./themes /srv/themes
 
 CMD ["caddy", "docker-proxy"]
