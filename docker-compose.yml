@@ -5,6 +5,7 @@ services:
     build: ./
     ports:
       - 8080:80
+      - 8081:443
     environment:
       - ACME_KEY_ID=test
       - ACME_MAC_ID=test
