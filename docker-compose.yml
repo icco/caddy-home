@@ -18,13 +18,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
-  hello:
-    image: ghcr.io/icco/hello:main
-    restart: unless-stopped
-    logging:
-      driver: json-file
-    networks:
-      - caddy
-    labels:
-      caddy.reverse_proxy: '{{upstreams 8080}}'
-      caddy.log:
