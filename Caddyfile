@@ -2,7 +2,7 @@
 	email nat@natwelch.com
 	# debug
 
-	admin off
+	admin on
 
 	order authenticate before respond
 	order authorize before basicauth
