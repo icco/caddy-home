@@ -8,8 +8,8 @@ ENV CGO_ENABLED=1
 RUN apk add --no-cache gcc musl-dev
 
 RUN xcaddy build ${CADDY_VERSION} \
-    --with github.com/lucaslorentz/caddy-docker-proxy/v2 \
-    --with github.com/greenpau/caddy-security
+    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.9.1 \
+    --with github.com/greenpau/caddy-security@v1.1.29
 
 FROM caddy:${CADDY_VERSION}-alpine
 
