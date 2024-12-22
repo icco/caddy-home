@@ -38,6 +38,8 @@
 
 			# https://icons8.com/line-awesome
 			ui {
+        theme basic
+
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
 					"Darkstat" /darkstat/ icon "las la-chart-pie"
