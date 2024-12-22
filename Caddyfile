@@ -71,9 +71,7 @@
 }
 
 newyork.welch.io {
-	metrics /metrics {
-		authorize with mypolicy
-	}
+	metrics /metrics
 
 	log
 
