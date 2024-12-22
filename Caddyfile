@@ -59,6 +59,8 @@
 		}
 
 		authorization policy mypolicy {
+			bypass uri prefix /metrics
+
 			set auth url {env.OAUTH_AUTH_URL}
 			crypto key verify {env.JWT_SHARED_KEY}
 			allow roles authp/admin authp/user
@@ -69,7 +71,9 @@
 }
 
 newyork.welch.io {
-	metrics /metrics
+	metrics /metrics {
+		authorize with mypolicy
+	}
 
 	log
 
