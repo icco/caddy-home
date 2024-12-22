@@ -2,7 +2,6 @@ networks:
   caddy:
 services:
   caddy:
-    image: tmp
     build: ./
     ports:
       - 80:80
