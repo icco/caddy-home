@@ -147,7 +147,7 @@ newyork.welch.io {
 		}
 	}
 
-	route {
+	route / {
 		redir https://{hostport}/auth 302
 	}
 }
