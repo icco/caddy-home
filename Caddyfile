@@ -37,11 +37,11 @@
 			}
 
 			ui {
-        # https://docs.authcrunch.com/docs/authenticate/ui-features
-        theme basic
+				# https://docs.authcrunch.com/docs/authenticate/ui-features
+				theme basic
 				custom css path /data/caddy/themes/custom.css
 
-        # https://icons8.com/line-awesome
+				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
 					"Darkstat" /darkstat/ icon "las la-chart-pie"
@@ -69,7 +69,7 @@
 }
 
 newyork.welch.io {
-  metrics /metrics
+	metrics /metrics
 
 	log
 
