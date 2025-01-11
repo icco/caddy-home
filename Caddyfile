@@ -9,10 +9,10 @@
 
 	# https://zerossl.com/documentation/acme/
 	acme_ca https://acme.zerossl.com/v2/DV90
-	acme_eab {
-		key_id {env.ACME_KEY_ID}
-		mac_key {env.ACME_MAC_KEY}
-	}
+  # acme_eab {
+	# 	key_id {env.ACME_KEY_ID}
+	# 	mac_key {env.ACME_MAC_KEY}
+	# }
 
 	log default {
 		output stdout
