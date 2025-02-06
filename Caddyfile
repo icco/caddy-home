@@ -9,7 +9,7 @@
 
 	# https://zerossl.com/documentation/acme/
 	acme_ca https://acme.zerossl.com/v2/DV90
-  # acme_eab {
+	# acme_eab {
 	# 	key_id {env.ACME_KEY_ID}
 	# 	mac_key {env.ACME_MAC_KEY}
 	# }
@@ -125,6 +125,7 @@ newyork.welch.io {
 		reverse_proxy localhost:666
 	}
 
+	# TODO: This is broken
 	route /archive/* {
 		authorize with mypolicy
 		uri strip_prefix /archive
