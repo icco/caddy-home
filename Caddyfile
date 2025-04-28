@@ -138,7 +138,7 @@ newyork.welch.io {
 		uri strip_prefix /files
 
 		file_server {
-			root /media/gallon/
+			root /media/
 			hide .* @*
 			browse
 		}
