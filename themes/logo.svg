@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/svg/2000" viewBox="0 0 50 50">
-<path stroke-width="2" fill="none" d="M3.75 12.5A8.75 8.75 0 0 0 21.25 12.5A8.75 8.75 0 0 0 3.75 12.5z " style="stroke-dasharray: 55, 57; stroke-dashoffset: 0;"></path>
-<path stroke-width="2" fill="none" d="M28.75 12.5A8.75 8.75 0 0 0 46.25 12.5A8.75 8.75 0 0 0 28.75 12.5z " style="stroke-dasharray: 55, 57; stroke-dashoffset: 0;"></path>
-<path stroke-width="2" fill="none" d="M3.75 37.5A8.75 8.75 0 0 0 21.25 37.5A8.75 8.75 0 0 0 3.75 37.5z " style="stroke-dasharray: 55, 57; stroke-dashoffset: 0;"></path>
-<path stroke-width="2" fill="none" d="M28.75 37.5A8.75 8.75 0 0 0 46.25 37.5A8.75 8.75 0 0 0 28.75 37.5z " style="stroke-dasharray: 55, 57; stroke-dashoffset: 0;"></path>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200; stroke: currentColor;" xml:space="preserve">
+  <path stroke-width="8" fill="none" d="M15 50A35 35 0 0 0 85 50A35 35 0 0 0 15 50z "></path>
+  <path stroke-width="8" fill="none" d="M115 50A35 35 0 0 0 185 50A35 35 0 0 0 115 50z "></path>
+  <path stroke-width="8" fill="none" d="M15 150A35 35 0 0 0 85 150A35 35 0 0 0 15 150z "></path>
+  <path stroke-width="8" fill="none" d="M115 150A35 35 0 0 0 185 150A35 35 0 0 0 115 150z "></path>
 </svg>
