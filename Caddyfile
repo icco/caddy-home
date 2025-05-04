@@ -15,9 +15,7 @@
 		format json
 	}
 
-	servers {
-		metrics
-	}
+	metrics /metrics
 
 	security {
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
@@ -78,8 +76,6 @@
 }
 
 newyork.welch.io {
-	metrics /metrics
-
 	log
 
 	route /auth* {
