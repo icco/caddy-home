@@ -1,13 +1,7 @@
-/*
-body {
-  background-color: Canvas;
+html, body {
+  background-color: Canvas !important;
   color: CanvasText;
   color-scheme: light dark;
-}
-*/
-
-html, body {
-    background-color: white !important;
 }
 
 .app-container {
