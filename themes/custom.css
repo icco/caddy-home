@@ -13,11 +13,17 @@ body {
 }
 
 .app-portal-btn-txt:hover, 
-.app-portal-btn-txt {
+.app-portal-btn-txt,
+.app-login-btn-txt:hover,
+.app-login-btn-txt {
     background-color: #4c566a;
     color: #eceff4;
 }
 
-.logo-col-txt, .app-inp-lbl {
+.logo-col-txt, .app-inp-lbl, .logo-txt {
     color: #e5e9f0;
+}
+
+#bookmarks {
+  display: none;
 }
