@@ -39,7 +39,7 @@
 				theme basic
 				custom css path /srv/themes/custom.css
 				# static_asset "assets/images/favicon.png" "image/png" "/srv/assets/favicon.png"
-				static_asset "assets/images/logo.svg" "image/svg+xml" /srv/themes/logo.svg
+				# static_asset "assets/images/logo.svg" "image/svg+xml" /srv/themes/logo.svg
 
 				disable settings sshkeys
 				disable settings gpgkeys
