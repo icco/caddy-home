@@ -8,40 +8,12 @@ body {
 .app-container {
     box-shadow: none;
     border: 1px solid #ccc;
+    background-color: #2e3440;
+    color: #e5e9f0;
 }
 
-#bookmarks {
-    display: none;
-}
-
-.app-body nav {
-    background-color: #9fd39f;
-    box-shadow: none;
-}
-
-nav .brand-logo {
-    color: black;
-    font-weight: bold;
-}
-
-.btn,
-.collection .collection-item.active {
-    background-color: #177408;
-}
-
-.collection a.collection-item {
-    color: #009b00;
-}
-
-.collection .collection-item:nth-child(2),
-.collection .collection-item:nth-child(3),
-.collection .collection-item:nth-child(5),
-.collection .collection-item:nth-child(7) {
-    display: none;
-}
-
-.navbtn,
-span.app-btn-text,
-span.app-error-text {
-    font-family: unset;
+.app-portal-btn-txt:hover, 
+.app-portal-btn-txt {
+    background-color: #4c566a;
+    color: #eceff4;
 }
