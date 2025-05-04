@@ -1,8 +1,8 @@
 html,
 body {
-    background-color: Canvas !important;
-    color: CanvasText;
-    color-scheme: light dark;
+  background-color: Canvas !important;
+  color: CanvasText;
+  color-scheme: light dark;
 }
 
 .app-content {
@@ -11,10 +11,10 @@ body {
 }
 
 .app-container {
-    box-shadow: none;
-    border: 1px solid #ccc;
-    background-color: #2e3440;
-    color: #e5e9f0;
+  background-color: #2e3440;
+  border: 1px solid #ccc;
+  box-shadow: none;
+  color: #e5e9f0;
 }
 
 .app-login-btn-img,
@@ -24,12 +24,12 @@ body {
 .app-portal-btn-txt,
 .app-portal-btn-txt:hover
 {
-    background-color: #4c566a;
-    color: #eceff4;
+  background-color: #4c566a;
+  color: #eceff4;
 }
 
 .logo-col-txt, .app-inp-lbl, .logo-txt {
-    color: #e5e9f0;
+  color: #e5e9f0;
 }
 
 #bookmarks, .app-inp-lbl {
