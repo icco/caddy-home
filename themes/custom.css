@@ -5,6 +5,11 @@ body {
     color-scheme: light dark;
 }
 
+.app-content {
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .app-container {
     box-shadow: none;
     border: 1px solid #ccc;
