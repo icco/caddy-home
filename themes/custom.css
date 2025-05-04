@@ -17,3 +17,7 @@ body {
     background-color: #4c566a;
     color: #eceff4;
 }
+
+.logo-col-txt, .app-inp-lbl {
+    color: #e5e9f0;
+}
