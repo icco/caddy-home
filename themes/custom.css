@@ -12,10 +12,13 @@ body {
     color: #e5e9f0;
 }
 
-.app-portal-btn-txt:hover, 
-.app-portal-btn-txt,
+.app-login-btn-img,
+.app-login-btn-txt,
 .app-login-btn-txt:hover,
-.app-login-btn-txt {
+.app-portal-btn-img,
+.app-portal-btn-txt,
+.app-portal-btn-txt:hover
+{
     background-color: #4c566a;
     color: #eceff4;
 }
@@ -24,6 +27,6 @@ body {
     color: #e5e9f0;
 }
 
-#bookmarks {
+#bookmarks, .app-inp-lbl {
   display: none;
 }
