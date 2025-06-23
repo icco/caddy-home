@@ -49,7 +49,6 @@
 				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
-					"Darkstat" /darkstat/ icon "las la-chart-pie"
 					"Files" /files/ icon "las la-sitemap"
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Kavita" /kavita/ icon "las la-book"
@@ -118,12 +117,6 @@ newyork.welch.io {
 
 	route /kavita/* {
 		reverse_proxy rope.local:5000
-	}
-
-	route /darkstat/* {
-		authorize with mypolicy
-		uri strip_prefix /darkstat
-		reverse_proxy localhost:666
 	}
 
 	# TODO: This is broken
