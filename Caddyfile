@@ -56,6 +56,7 @@
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
+          "Romm" /romm/ icon "las la-gamepad"
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
 					"Sonarr" /sonarr/ icon "las la-tv"
 				}
@@ -124,6 +125,12 @@ newyork.welch.io {
 		authorize with mypolicy
 		uri strip_prefix /archive
 		reverse_proxy rope.local:8001
+	}
+
+	route /romm/* {
+		authorize with mypolicy
+		uri strip_prefix /archive
+		reverse_proxy rope.local:7676
 	}
 
 	route /skyaware/* {
