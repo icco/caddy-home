@@ -128,7 +128,17 @@ newyork.welch.io {
 	}
 
 	route /romm/* {
-		authorize with mypolicy
+		encode zstd gzip
+
+		header * {
+			Strict-Transport-Security "max-age=31536000;"
+			X-XSS-Protection "1; mode=block"
+			X-Frame-Options "SAMEORIGIN"
+			X-Robots-Tag "noindex, nofollow"
+			-Server
+			-X-Powered-By
+		}
+
 		uri strip_prefix /archive
 		reverse_proxy rope.local:7676
 	}
