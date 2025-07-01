@@ -138,7 +138,7 @@ newyork.welch.io {
 			-X-Powered-By
 		}
 
-		uri strip_prefix /archive
+		uri strip_prefix /romm
 		reverse_proxy rope.local:7676
 	}
 
