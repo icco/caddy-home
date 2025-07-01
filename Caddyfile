@@ -56,7 +56,7 @@
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
-          "Romm" /romm/ icon "las la-gamepad"
+					"Romm" /romm/ icon "las la-gamepad"
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
 					"Sonarr" /sonarr/ icon "las la-tv"
 				}
