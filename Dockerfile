@@ -10,7 +10,7 @@ RUN apk add --no-cache gcc musl-dev
 # https://github.com/lucaslorentz/caddy-docker-proxy/releases
 # https://github.com/greenpau/caddy-security/releases
 RUN xcaddy build ${CADDY_VERSION} \
-    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.9.2 \
+    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0 \
     --with github.com/greenpau/caddy-security@v1.1.31
 
 FROM caddy:${CADDY_VERSION}-alpine
