@@ -1,5 +1,5 @@
 # https://github.com/caddyserver/caddy/releases
-ARG CADDY_VERSION=2.10.0
+ARG CADDY_VERSION=2.10.2
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
 ENV GODEBUG=netdns=cgo
