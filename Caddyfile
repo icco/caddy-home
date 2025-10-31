@@ -58,6 +58,7 @@
 					"Readarr" /readarr/ icon "las la-book"
 					"Romm" /romm/ icon "las la-gamepad"
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
+					"SlSkD" /slskd/ icon "las la-file-audio"
 					"Sonarr" /sonarr/ icon "las la-tv"
 				}
 			}
@@ -104,6 +105,11 @@ newyork.welch.io {
 	route /lidarr/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:8686
+	}
+
+	route /slskd/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:5030
 	}
 
 	route /readarr/* {
