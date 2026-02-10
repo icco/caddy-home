@@ -4,7 +4,6 @@
 
 	admin off
 
-	order rate_limit before authenticate
 	order authenticate before respond
 	order authorize before basicauth
 

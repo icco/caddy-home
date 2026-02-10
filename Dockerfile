@@ -24,6 +24,6 @@ COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY ./Caddyfile /srv/Caddyfile
 COPY ./themes /srv/themes
 
-# RUN caddy validate
+RUN caddy validate
 
 CMD ["caddy", "docker-proxy"]
