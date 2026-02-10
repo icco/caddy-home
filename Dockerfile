@@ -13,7 +13,7 @@ RUN apk add --no-cache gcc musl-dev
 RUN xcaddy build ${CADDY_VERSION} \
     --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0 \
     --with github.com/greenpau/caddy-security@v1.1.31 \
-    --with github.com/mholt/caddy-ratelimit@v0.4.0
+    --with github.com/mholt/caddy-ratelimit
 
 FROM caddy:${CADDY_VERSION}-alpine
 
