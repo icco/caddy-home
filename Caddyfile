@@ -186,7 +186,7 @@ newyork.welch.io {
 	# Rate limit for API endpoints - moderate limits (60 req/min per IP)
 	@api_endpoints {
 		path /api/*
-		path */api/*
+		path_regexp ^.*/api/.*$
 	}
 	rate_limit @api_endpoints {
 		zone api_zone {
