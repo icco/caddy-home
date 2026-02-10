@@ -169,11 +169,10 @@ newyork.welch.io {
 		redir https://{hostport}/auth 302
 	}
 
-	# Rate limit for authentication endpoints - strict limits (5 req/min per IP)
+	# Rate limit for authentication portal - strict limits (5 req/min per IP)
+	# Protects the OAuth/login flows from brute force attacks
 	@auth_endpoints {
 		path /auth/*
-		path /login
-		path /register
 	}
 	rate_limit @auth_endpoints {
 		zone auth_zone {
@@ -184,9 +183,9 @@ newyork.welch.io {
 	}
 
 	# Rate limit for API endpoints - moderate limits (60 req/min per IP)
+	# Covers both root-level /api/* and service-level */api/* paths
 	@api_endpoints {
-		path /api/*
-		path_regexp ^.*/api/.*$
+		path_regexp api_pattern (^/api/|/api/)
 	}
 	rate_limit @api_endpoints {
 		zone api_zone {
@@ -197,6 +196,7 @@ newyork.welch.io {
 	}
 
 	# General rate limit for all other requests (100 req/min per IP)
+	# Applies as a baseline protection for all endpoints
 	rate_limit {
 		zone general_zone {
 			key {remote_host}
