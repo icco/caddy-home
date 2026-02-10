@@ -186,7 +186,7 @@ newyork.welch.io {
 	# Covers both root-level /api/* and service-level */api/* paths
 	# Excludes /auth/* which has stricter limits above
 	@api_endpoints {
-		path_regexp api_pattern /api/
+		path_regexp /api/
 		not path /auth/*
 	}
 	rate_limit @api_endpoints {
@@ -201,7 +201,7 @@ newyork.welch.io {
 	# Excludes paths that have more specific rate limits above
 	@general_endpoints {
 		not path /auth/*
-		not path_regexp api_pattern /api/
+		not path_regexp /api/
 	}
 	rate_limit @general_endpoints {
 		zone general_zone {
