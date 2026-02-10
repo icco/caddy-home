@@ -168,18 +168,14 @@ newyork.welch.io {
 	route / {
 		redir https://{hostport}/auth 302
 	}
-}
-
-etu.welch.io {
-	log
 
 	# Rate limit for authentication endpoints - strict limits (5 req/min per IP)
-	@auth {
-		path /api/auth/*
+	@auth_endpoints {
+		path /auth/*
 		path /login
 		path /register
 	}
-	rate_limit @auth {
+	rate_limit @auth_endpoints {
 		zone auth_zone {
 			key {remote_host}
 			events 5
@@ -188,10 +184,11 @@ etu.welch.io {
 	}
 
 	# Rate limit for API endpoints - moderate limits (60 req/min per IP)
-	@api {
+	@api_endpoints {
 		path /api/*
+		path */api/*
 	}
-	rate_limit @api {
+	rate_limit @api_endpoints {
 		zone api_zone {
 			key {remote_host}
 			events 60
@@ -207,7 +204,5 @@ etu.welch.io {
 			window 1m
 		}
 	}
-
-	# Proxy to etu-web backend (adjust port as needed)
-	reverse_proxy localhost:3000
 }
+
