@@ -170,8 +170,10 @@ newyork.welch.io {
 
 	# Rate limit for authentication portal - strict limits (5 req/min per IP)
 	# Protects the OAuth/login flows from brute force attacks
+	# 192.168.1.0/24 (LAN) is whitelisted from all rate limits
 	@auth_endpoints {
 		path /auth/*
+		not remote_ip 192.168.1.0/24
 	}
 	rate_limit @auth_endpoints {
 		zone auth_zone {
@@ -187,6 +189,7 @@ newyork.welch.io {
 	@api_endpoints {
 		path_regexp \/api\/
 		not path /auth/*
+		not remote_ip 192.168.1.0/24
 	}
 	rate_limit @api_endpoints {
 		zone api_zone {
@@ -202,6 +205,7 @@ newyork.welch.io {
 	@general_endpoints {
 		not path /auth/*
 		not path_regexp \/api\/
+		not remote_ip 192.168.1.0/24
 	}
 	rate_limit @general_endpoints {
 		zone general_zone {
