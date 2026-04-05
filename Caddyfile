@@ -53,6 +53,7 @@
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
+					"MusicSeerr" /lidarr/ icon "las la-headphones"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -105,6 +106,11 @@ newyork.welch.io {
 	route /lidarr/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:8686
+	}
+
+	route /musicseerr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8688
 	}
 
 	route /slskd/* {
