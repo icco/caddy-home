@@ -131,6 +131,7 @@ newyork.welch.io {
 	}
 
 	route /kavita/* {
+		authorize with mypolicy
 		reverse_proxy rope.local:5000
 	}
 
@@ -142,6 +143,7 @@ newyork.welch.io {
 	}
 
 	route /romm/* {
+		authorize with mypolicy
 		encode zstd gzip
 
 		header * {
