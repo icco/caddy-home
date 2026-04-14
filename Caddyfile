@@ -6,6 +6,7 @@
 
 	order authenticate before respond
 	order authorize before basicauth
+	order rate_limit after authorize
 
 	# https://zerossl.com/documentation/acme/
 	acme_ca https://acme.zerossl.com/v2/DV90
@@ -176,9 +177,10 @@ newyork.welch.io {
 	}
 
 	# Rate limit: 100 req/min per IP for all requests
-	# 192.168.1.0/24 (LAN) is whitelisted
+	# 192.168.1.0/24 (LAN) and authenticated users are exempt
 	@rate_limit_all {
 		not remote_ip 192.168.1.0/24
+		not header X-Token-User-Id *
 	}
 	rate_limit @rate_limit_all {
 		zone default_zone {
