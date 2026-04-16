@@ -176,16 +176,16 @@ newyork.welch.io {
 		redir https://{hostport}/auth 302
 	}
 
-	# Rate limit: 100 req/min per IP for all requests
+	# Rate limit: 1000 req/min per IP for all requests
 	# 192.168.1.0/24 (LAN) and authenticated users are exempt
 	@rate_limit_all {
 		not remote_ip 192.168.1.0/24
-		not header X-Token-User-Id *
+		not header Authorization *
 	}
 	rate_limit @rate_limit_all {
 		zone default_zone {
 			key {remote_host}
-			events 100
+			events 1000
 			window 1m
 		}
 	}
