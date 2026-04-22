@@ -92,6 +92,7 @@ newyork.welch.io {
 
 	route /navi/* {
 		authorize with mypolicy
+		header_up Remote-User nat
 		reverse_proxy rope.local:4533
 	}
 
