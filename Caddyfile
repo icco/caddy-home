@@ -55,6 +55,7 @@
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
 					"MusicSeerr" /musicseerr/ icon "las la-headphones"
+					"Navidrome" /navi/ icon "las la-headphones"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -87,6 +88,11 @@ newyork.welch.io {
 
 	route /healthz {
 		respond "ok."
+	}
+
+	route /navi/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:4533
 	}
 
 	route /radarr/* {
