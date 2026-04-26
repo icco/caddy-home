@@ -54,7 +54,6 @@
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
-					"Navidrome" /navi/ icon "las la-headphones"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -62,7 +61,6 @@
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
 					"SlSkD" /slskd/ icon "las la-file-audio"
 					"Sonarr" /sonarr/ icon "las la-tv"
-					"Spotify to Plex" /spotify-to-plex/ icon "lab la-spotify"
 				}
 			}
 		}
@@ -90,13 +88,6 @@ newyork.welch.io {
 		respond "ok."
 	}
 
-	route /navi/* {
-		authorize with mypolicy
-		reverse_proxy rope.local:4533 {
-			header_up Remote-User nat
-		}
-	}
-
 	route /radarr/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:7878
@@ -120,12 +111,6 @@ newyork.welch.io {
 	route /slskd/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:5030
-	}
-
-	route /spotify-to-plex/* {
-		authorize with mypolicy
-		uri strip_prefix /spotify-to-plex
-		reverse_proxy rope.local:9030
 	}
 
 	route /readarr/* {
