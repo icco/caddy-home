@@ -17,6 +17,10 @@ RUN xcaddy build ${CADDY_VERSION} \
 
 FROM caddy:${CADDY_VERSION}-alpine
 
+LABEL org.opencontainers.image.source=https://github.com/icco/caddy-home
+LABEL org.opencontainers.image.description="Caddy reverse proxy for icco's home server; custom xcaddy build with caddy-docker-proxy, caddy-security, and caddy-ratelimit modules."
+LABEL org.opencontainers.image.licenses=MIT
+
 ENV CADDY_INGRESS_NETWORKS=caddy
 ENV CADDY_DOCKER_CADDYFILE_PATH=/srv/Caddyfile
 
