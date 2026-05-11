@@ -74,6 +74,8 @@
 			allow roles authp/admin authp/user
 			validate bearer header
 			inject headers with claims
+			inject header "X-WEBAUTH-USER" from "sub"
+			inject header "X-WEBAUTH-EMAIL" from "email"
 		}
 	}
 }
