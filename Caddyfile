@@ -52,6 +52,7 @@
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
 					"Files" /files/ icon "las la-sitemap"
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
+					"Grafana" /grafana/ icon "las la-chart-line"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
@@ -125,6 +126,11 @@ newyork.welch.io {
 
 	route /kavita/* {
 		reverse_proxy rope.local:5000
+	}
+
+	route /grafana/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:3000
 	}
 
 	# TODO: This is broken
