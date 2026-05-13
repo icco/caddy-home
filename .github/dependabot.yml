@@ -1,11 +1,5 @@
 version: 2
 updates:
-  # Caddy base image — picks up `ARG CADDY_VERSION=` and `FROM caddy:...`.
-  # NOTE: xcaddy plugin pins on the `xcaddy build` line (caddy-docker-proxy,
-  # caddy-security, caddy-ratelimit) are NOT a Dependabot-supported ecosystem
-  # because they live inline in a RUN command rather than a go.mod. Bump
-  # those manually when refreshing the base image, or migrate to Renovate
-  # if automation is required.
   - package-ecosystem: docker
     directory: /
     schedule:
