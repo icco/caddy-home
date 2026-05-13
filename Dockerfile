@@ -28,6 +28,10 @@ COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY ./Caddyfile /srv/Caddyfile
 COPY ./themes /srv/themes
 
-RUN caddy validate
+RUN OAUTH_CLIENT_ID=dummy \
+    OAUTH_CLIENT_SECRET=dummy \
+    OAUTH_AUTH_URL=https://example.com/auth \
+    JWT_SHARED_KEY=dummy \
+    caddy validate
 
 CMD ["caddy", "docker-proxy"]
