@@ -1,5 +1,5 @@
 # https://github.com/caddyserver/caddy/releases
-ARG CADDY_VERSION=2.10.2
+ARG CADDY_VERSION=2.11.3
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
 ENV GODEBUG=netdns=cgo
@@ -11,8 +11,8 @@ RUN apk add --no-cache gcc musl-dev
 # https://github.com/greenpau/caddy-security/releases
 # https://github.com/mholt/caddy-ratelimit/releases
 RUN xcaddy build ${CADDY_VERSION} \
-    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0 \
-    --with github.com/greenpau/caddy-security@v1.1.31 \
+    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.12.0 \
+    --with github.com/greenpau/caddy-security@v1.1.62 \
     --with github.com/mholt/caddy-ratelimit
 
 FROM caddy:${CADDY_VERSION}-alpine
@@ -28,6 +28,10 @@ COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY ./Caddyfile /srv/Caddyfile
 COPY ./themes /srv/themes
 
-RUN caddy validate
+RUN OAUTH_CLIENT_ID=dummy \
+    OAUTH_CLIENT_SECRET=dummy \
+    OAUTH_AUTH_URL=https://example.com/auth \
+    JWT_SHARED_KEY=dummy \
+    caddy validate
 
 CMD ["caddy", "docker-proxy"]

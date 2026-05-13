@@ -42,11 +42,6 @@
 				# static_asset "assets/images/favicon.png" "image/png" "/srv/assets/favicon.png"
 				static_asset "assets/images/logo.svg" "image/svg+xml" /srv/themes/logo.svg
 
-				disable settings sshkeys
-				disable settings gpgkeys
-				disable settings mfa
-				disable settings connected
-
 				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
