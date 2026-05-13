@@ -1,17 +1,26 @@
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    versioning-strategy: increase
-    open-pull-requests-limit: 10
+  # Caddy base image — picks up `ARG CADDY_VERSION=` and `FROM caddy:...`.
+  # NOTE: xcaddy plugin pins on the `xcaddy build` line (caddy-docker-proxy,
+  # caddy-security, caddy-ratelimit) are NOT a Dependabot-supported ecosystem
+  # because they live inline in a RUN command rather than a go.mod. Bump
+  # those manually when refreshing the base image, or migrate to Renovate
+  # if automation is required.
   - package-ecosystem: docker
     directory: /
-    open-pull-requests-limit: 10
     schedule:
       interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      docker:
+        patterns:
+          - "*"
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
