@@ -139,7 +139,15 @@ newyork.welch.io {
 	route /acntng/* {
 		authorize with mypolicy
 		uri strip_prefix /acntng
-		reverse_proxy acntng:8080
+
+		# acntng also requires this secret, because ~40 sibling containers on
+		# the shared caddy network can reach acntng:8080 by name and skip this
+		# portal -- including a hoarder that crawls user-submitted URLs
+		# through a chrome listening on 0.0.0.0:9222. The portal's injected
+		# identity headers are forgeable by anything that can reach the port.
+		reverse_proxy acntng:8080 {
+			header_up X-Acntng-Key {$ACNTNG_SHARED_KEY}
+		}
 	}
 
 	# TODO: This is broken
