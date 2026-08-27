@@ -50,6 +50,7 @@
 					"Grafana" /grafana/ icon "las la-chart-line"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
+					"Loans" /acntng/ icon "las la-hand-holding-usd"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -128,6 +129,23 @@ newyork.welch.io {
 	route /grafana/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:3000
+	}
+
+	# On mist, so it resolves by container name. The redirect is needed because
+	# strip_prefix on exactly /acntng would leave an empty path.
+	redir /acntng /acntng/ 301
+
+	route /acntng/* {
+		authorize with mypolicy
+		uri strip_prefix /acntng
+
+		# acntng also checks this secret: siblings on this network can reach
+		# acntng:8080 directly and skip the portal, and the portal's injected
+		# headers are forgeable. The :default keeps an unset var from failing
+		# the parse and taking every site down.
+		reverse_proxy acntng:8080 {
+			header_up X-Acntng-Key {$ACNTNG_SHARED_KEY:no-key-configured}
+		}
 	}
 
 	# TODO: This is broken
