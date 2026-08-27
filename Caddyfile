@@ -131,24 +131,18 @@ newyork.welch.io {
 		reverse_proxy rope.local:3000
 	}
 
-	# acntng runs on mist and shares caddy's docker network, so it resolves by
-	# container name. The bare path needs the explicit redirect: strip_prefix on
-	# exactly /acntng would leave an empty path.
+	# On mist, so it resolves by container name. The redirect is needed because
+	# strip_prefix on exactly /acntng would leave an empty path.
 	redir /acntng /acntng/ 301
 
 	route /acntng/* {
 		authorize with mypolicy
 		uri strip_prefix /acntng
 
-		# acntng also requires this secret, because ~40 sibling containers on
-		# the shared caddy network can reach acntng:8080 by name and skip this
-		# portal -- including a hoarder that crawls user-submitted URLs
-		# through a chrome listening on 0.0.0.0:9222. The portal's injected
-		# identity headers are forgeable by anything that can reach the port.
-		# The default matters: {$VAR} is substituted when the Caddyfile is
-		# parsed, so an unset variable would leave header_up with no value and
-		# risk failing the parse -- taking every site down. With a default,
-		# acntng simply 403s until mist supplies the real key.
+		# acntng also checks this secret: siblings on this network can reach
+		# acntng:8080 directly and skip the portal, and the portal's injected
+		# headers are forgeable. The :default keeps an unset var from failing
+		# the parse and taking every site down.
 		reverse_proxy acntng:8080 {
 			header_up X-Acntng-Key {$ACNTNG_SHARED_KEY:no-key-configured}
 		}
