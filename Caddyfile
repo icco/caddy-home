@@ -50,6 +50,7 @@
 					"Grafana" /grafana/ icon "las la-chart-line"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
+					"Loans" /acntng/ icon "las la-hand-holding-usd"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -128,6 +129,17 @@ newyork.welch.io {
 	route /grafana/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:3000
+	}
+
+	# acntng runs on mist and shares caddy's docker network, so it resolves by
+	# container name. The bare path needs the explicit redirect: strip_prefix on
+	# exactly /acntng would leave an empty path.
+	redir /acntng /acntng/ 301
+
+	route /acntng/* {
+		authorize with mypolicy
+		uri strip_prefix /acntng
+		reverse_proxy acntng:8080
 	}
 
 	# TODO: This is broken
