@@ -64,6 +64,7 @@
 
 		authorization policy mypolicy {
 			bypass uri prefix /metrics
+			bypass uri prefix /grafana/metrics
 
 			set auth url {$OAUTH_AUTH_URL}
 			crypto key verify {env.JWT_SHARED_KEY}
