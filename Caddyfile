@@ -14,6 +14,20 @@
 	log default {
 		output stdout
 		format json
+		exclude http.log.error.opencode
+	}
+
+	# Access-log filters don't cover proxy errors; those can contain the same URL.
+	log opencode-errors {
+		include http.log.error.opencode
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>uri delete
+				request>headers delete
+			}
+		}
 	}
 
 	metrics /metrics
@@ -73,6 +87,52 @@
 			inject headers with claims
 			inject header "X-WEBAUTH-USER" from "sub"
 			inject header "X-WEBAUTH-EMAIL" from "email"
+		}
+	}
+}
+
+# Imported by OpenCode's Docker label; authentication remains in OpenCode.
+(opencode-web) {
+	log opencode {
+		format filter {
+			wrap json
+			fields {
+				# Pairing codes live in paths; auth_token and PTY tickets in queries.
+				# Keep host, method, client IP and status for Fail2Ban, not URLs.
+				request>uri delete
+				request>headers delete
+				resp_headers delete
+			}
+		}
+	}
+
+	route {
+		header {
+			defer
+			Strict-Transport-Security "max-age=31536000"
+			X-Content-Type-Options nosniff
+			Referrer-Policy no-referrer
+			X-Frame-Options DENY
+			# Add a second policy, preserving OpenCode's script hashes/wasm policy.
+			+Content-Security-Policy "frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		}
+
+		@sensitive path /api /api/* /auth /auth/* /openapi.json
+		header @sensitive {
+			Cache-Control no-store
+			defer
+		}
+
+		# CORS alone does not reject a credentialed request before execution.
+		# This also protects WebSocket upgrades and requests from sibling sites.
+		@foreign_origin {
+			header Origin *
+			not header Origin https://opencode.natwelch.com
+		}
+		respond @foreign_origin "Forbidden" 403
+
+		reverse_proxy opencode:4096 {
+			flush_interval -1
 		}
 	}
 }

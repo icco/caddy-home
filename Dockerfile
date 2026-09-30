@@ -32,6 +32,15 @@ RUN OAUTH_CLIENT_ID=dummy \
     OAUTH_CLIENT_SECRET=dummy \
     OAUTH_AUTH_URL=https://example.com/auth \
     JWT_SHARED_KEY=dummy \
-    caddy validate
+    caddy validate --config /srv/Caddyfile
+
+# Validate the route normally imported by Docker labels as well as the base file.
+RUN cp /srv/Caddyfile /tmp/Caddyfile && \
+    printf '\nopencode.natwelch.com {\n import opencode-web\n}\n' >> /tmp/Caddyfile && \
+    OAUTH_CLIENT_ID=dummy \
+    OAUTH_CLIENT_SECRET=dummy \
+    OAUTH_AUTH_URL=https://example.com/auth \
+    JWT_SHARED_KEY=dummy \
+    caddy validate --config /tmp/Caddyfile && rm /tmp/Caddyfile
 
 CMD ["caddy", "docker-proxy"]
