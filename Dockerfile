@@ -26,12 +26,28 @@ ENV CADDY_DOCKER_CADDYFILE_PATH=/srv/Caddyfile
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY ./Caddyfile /srv/Caddyfile
+COPY ./opencode-auth.caddy /srv/opencode-auth.caddy
 COPY ./themes /srv/themes
 
 RUN OAUTH_CLIENT_ID=dummy \
     OAUTH_CLIENT_SECRET=dummy \
     OAUTH_AUTH_URL=https://example.com/auth \
     JWT_SHARED_KEY=dummy \
-    caddy validate
+    caddy validate --config /srv/Caddyfile
+
+# Also provision the opt-in portal and the route normally imported by Docker
+# labels. Test credentials are scoped to this build step, not the runtime image.
+RUN cp /srv/Caddyfile /tmp/Caddyfile && \
+    printf '\nopencode.natwelch.com {\n import opencode-github\n}\n' >> /tmp/Caddyfile && \
+    OAUTH_CLIENT_ID=dummy \
+    OAUTH_CLIENT_SECRET=dummy \
+    OAUTH_AUTH_URL=https://example.com/auth \
+    JWT_SHARED_KEY=dummy \
+    OPENCODE_AUTH_CONFIG=/srv/opencode-auth.caddy \
+    OPENCODE_OAUTH_CLIENT_ID=dummy \
+    OPENCODE_OAUTH_CLIENT_SECRET=dummy \
+    OPENCODE_JWT_SHARED_KEY=build-only-not-a-production-secret \
+    OPENCODE_BACKEND_AUTH=build-only \
+    caddy validate --config /tmp/Caddyfile && rm /tmp/Caddyfile
 
 CMD ["caddy", "docker-proxy"]

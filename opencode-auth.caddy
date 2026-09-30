@@ -1,0 +1,46 @@
+# Loaded inside the global security block only when OPENCODE_AUTH_CONFIG is set.
+# Separate credentials and signing key isolate this from the home auth portal.
+oauth identity provider opencode-github {
+	realm opencode-github
+	driver github
+	client_id {env.OPENCODE_OAUTH_CLIENT_ID}
+	client_secret {env.OPENCODE_OAUTH_CLIENT_SECRET}
+	scopes user:email
+}
+
+authentication portal opencode-portal {
+	crypto default token lifetime 3600
+	crypto key sign-verify {env.OPENCODE_JWT_SHARED_KEY}
+	enable identity provider opencode-github
+
+	cookie lifetime 3600
+	cookie path /
+	cookie strip domain
+	cookie samesite lax
+	cookie insecure off
+	set access_token cookie name __Host-opencode-access
+	set session_id cookie name __Host-opencode-session
+	set redirect_url cookie name __Host-opencode-redirect
+	set sandbox_id cookie name __Host-opencode-sandbox
+	set id_token cookie name __Host-opencode-id
+	set refresh_token cookie name __Host-opencode-refresh
+	trust login redirect uri domain exact opencode.natwelch.com path prefix /
+
+	transform user {
+		exact match sub github.com/icco
+		action add role opencode/user
+	}
+	ui {
+		links {
+			"OpenCode" https://opencode.natwelch.com/ icon "las la-terminal"
+		}
+	}
+}
+
+authorization policy opencode-policy {
+	set auth url https://opencode.natwelch.com/_auth/oauth2/opencode-github
+	crypto key verify {env.OPENCODE_JWT_SHARED_KEY}
+	allow roles opencode/user
+	set access_token cookie name __Host-opencode-access
+	set token sources cookie
+}

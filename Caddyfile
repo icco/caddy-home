@@ -19,6 +19,9 @@
 	metrics /metrics
 
 	security {
+		# Opted into by mist's OpenCode deployment; an unmatched glob is a no-op.
+		import {$OPENCODE_AUTH_CONFIG:disabled/*.caddy}
+
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
 
 		authentication portal myportal {
@@ -73,6 +76,35 @@
 			inject headers with claims
 			inject header "X-WEBAUTH-USER" from "sub"
 			inject header "X-WEBAUTH-EMAIL" from "email"
+		}
+	}
+}
+
+# Imported by the OpenCode service's Docker label. Keep /_auth separate from
+# OpenCode's own /auth endpoints, and authorize every upstream request.
+(opencode-github) {
+	route {
+		@portal path /_auth /_auth/*
+		handle @portal {
+			authenticate with opencode-portal
+		}
+		handle {
+			authorize with opencode-policy
+
+			# SameSite alone doesn't block requests from sibling natwelch.com sites.
+			@cross_origin {
+				header Origin *
+				not header Origin https://opencode.natwelch.com
+			}
+			respond @cross_origin "Forbidden" 403
+
+			reverse_proxy opencode:4096 {
+				flush_interval -1
+				# Replace client credentials only after GitHub authorization succeeds.
+				header_up Authorization "Basic {env.OPENCODE_BACKEND_AUTH}"
+				# OpenCode doesn't need the gateway's session token.
+				header_up -Cookie
+			}
 		}
 	}
 }
