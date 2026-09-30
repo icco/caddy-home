@@ -24,11 +24,11 @@ import urllib.parse
 
 ROOT = Path(__file__).resolve().parents[1]
 CADDY = os.environ.get("CADDY", "caddy")
-KEY = "test-only-opencode-signing-key-not-for-production"
+KEY = "test-only-shared-portal-signing-key-not-for-production"
 BACKEND_AUTH = "Basic " + base64.b64encode(b"opencode:test-backend-password").decode()
 
 
-def token(role="opencode/user", key=KEY, expiry=3600):
+def token(role="authp/admin", key=KEY, expiry=3600):
     def encode(value):
         return base64.urlsafe_b64encode(value).rstrip(b"=").decode()
 
@@ -71,10 +71,8 @@ class AuthBoundary(unittest.TestCase):
         cls.addClassCleanup(cls.tmp.cleanup)
         work = Path(cls.tmp.name)
         env = {**os.environ, "OAUTH_CLIENT_ID": "test", "OAUTH_CLIENT_SECRET": "test",
-               "OAUTH_AUTH_URL": "https://newyork.welch.io/auth", "JWT_SHARED_KEY": "test-home-key",
-               "OPENCODE_OAUTH_CLIENT_ID": "test-opencode", "OPENCODE_OAUTH_CLIENT_SECRET": "test",
-               "OPENCODE_JWT_SHARED_KEY": KEY, "OPENCODE_BACKEND_AUTH": BACKEND_AUTH.split()[1]}
-        env.pop("OPENCODE_AUTH_CONFIG", None)
+               "OAUTH_AUTH_URL": "https://newyork.welch.io/auth/oauth2/github", "JWT_SHARED_KEY": KEY,
+               "OPENCODE_BACKEND_AUTH": BACKEND_AUTH.split()[1]}
         config = work / "Caddyfile"
         source = (ROOT / "Caddyfile").read_text().replace("/srv/themes", str(ROOT / "themes"))
         config.write_text(source)
@@ -87,8 +85,7 @@ class AuthBoundary(unittest.TestCase):
 
         # Both pre-activation and activated deployments must provision cleanly.
         run("validate", "--config", str(config))
-        env["OPENCODE_AUTH_CONFIG"] = str(ROOT / "opencode-auth.caddy")
-        config.write_text(source + "\nopencode.natwelch.com {\n import opencode-github\n}\n")
+        config.write_text(source + "\nopencode.newyork.welch.io {\n import opencode-github\n}\n")
         run("validate", "--config", str(config))
         adapted = json.loads(run("adapt", "--config", str(config)))
 
@@ -103,9 +100,9 @@ class AuthBoundary(unittest.TestCase):
         # Retain the production route and policy; replace only listeners/upstream.
         routes = [route for server in adapted["apps"]["http"]["servers"].values()
                   for route in server["routes"]
-                  if any("opencode.natwelch.com" in match.get("host", [])
+                  if any(set(match.get("host", [])) & {"opencode.newyork.welch.io", "newyork.welch.io"}
                          for match in route.get("match", []))]
-        assert len(routes) == 1, "expected exactly one OpenCode virtual host"
+        assert len(routes) == 2, "expected OpenCode and the existing home portal"
         adapted["apps"]["http"]["servers"] = {"test": {
             "listen": [f"127.0.0.1:{cls.port}"], "routes": routes, "automatic_https": {"disable": True}}}
         adapted["apps"].pop("tls", None)
@@ -139,7 +136,7 @@ class AuthBoundary(unittest.TestCase):
     def request(cls, path, headers=None, method="GET"):
         conn = http.client.HTTPConnection("127.0.0.1", cls.port, timeout=5)
         try:
-            conn.request(method, path, headers={"Host": "opencode.natwelch.com", **(headers or {})})
+            conn.request(method, path, headers={"Host": "opencode.newyork.welch.io", **(headers or {})})
             response = conn.getresponse()
             return response.status, dict(response.getheaders()), response.read()
         finally:
@@ -152,21 +149,21 @@ class AuthBoundary(unittest.TestCase):
                 with self.subTest(path=path, headers=headers):
                     status, response, _ = self.request(path, headers)
                     self.assertIn(status, [302, 303, 307])
-                    self.assertTrue(response["Location"].startswith("https://opencode.natwelch.com/_auth/"))
+                    self.assertTrue(response["Location"].startswith("https://newyork.welch.io/auth/oauth2/github"))
 
     def test_authorized_request_replaces_credentials_and_strips_cookies(self):
         status, _, body = self.request("/api/info", {
-            "Cookie": "__Host-opencode-access=" + token(), "Authorization": "Basic attacker"})
+            "Cookie": "AUTHP_ACCESS_TOKEN=" + token(), "Authorization": "Basic attacker"})
         self.assertEqual(status, 200, body)
         headers = json.loads(body)
         self.assertEqual(headers["Authorization"], BACKEND_AUTH)
         self.assertNotIn("Cookie", headers)
 
     def test_wrong_role_key_and_expired_tokens_are_denied(self):
-        for value in [token(role="authp/user"), token(role="authp/admin"),
-                      token(key="test-home-key"), token(expiry=-60)]:
+        for value in [token(role="authp/user"), token(role="opencode/user"),
+                      token(key="test-retired-key"), token(expiry=-60)]:
             with self.subTest(token=value):
-                status, _, _ = self.request("/api/info", {"Cookie": "__Host-opencode-access=" + value})
+                status, _, _ = self.request("/api/info", {"Cookie": "AUTHP_ACCESS_TOKEN=" + value})
                 self.assertNotEqual(status, 200)
 
     def test_bearer_and_query_tokens_are_not_login_bypasses(self):
@@ -177,48 +174,47 @@ class AuthBoundary(unittest.TestCase):
             self.assertIn(status, [302, 303, 307])
 
     def test_foreign_origins_are_denied_including_sibling_sites(self):
-        for origin in ["https://evil.example", "https://art.natwelch.com", "null"]:
+        for origin in ["https://evil.example", "https://other.newyork.welch.io", "https://newyork.welch.io", "null"]:
             for method in ["GET", "POST"]:
                 with self.subTest(origin=origin, method=method):
                     status, _, _ = self.request("/api/info", {
-                        "Cookie": "__Host-opencode-access=" + token(), "Origin": origin}, method)
+                        "Cookie": "AUTHP_ACCESS_TOKEN=" + token(), "Origin": origin}, method)
                     self.assertEqual(status, 403)
         status, _, _ = self.request("/api/info", {
-            "Cookie": "__Host-opencode-access=" + token(),
-            "Origin": "https://opencode.natwelch.com"}, "POST")
+            "Cookie": "AUTHP_ACCESS_TOKEN=" + token(),
+            "Origin": "https://opencode.newyork.welch.io"}, "POST")
         self.assertEqual(status, 200)
 
     def test_websocket_handshake_requires_cookie_and_same_origin(self):
         headers = {"Connection": "Upgrade", "Upgrade": "websocket",
                    "Sec-WebSocket-Version": "13", "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ==",
-                   "Origin": "https://opencode.natwelch.com"}
+                   "Origin": "https://opencode.newyork.welch.io"}
         status, _, _ = self.request("/api/pty/test/connect", headers)
         self.assertIn(status, [302, 303, 307])
-        headers["Cookie"] = "__Host-opencode-access=" + token()
+        headers["Cookie"] = "AUTHP_ACCESS_TOKEN=" + token()
         status, response, _ = self.request("/api/pty/test/connect", headers)
         self.assertEqual(status, 101)
         self.assertEqual({key.lower(): value for key, value in response.items()}["sec-websocket-accept"],
                          "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=")
-        headers["Origin"] = "https://art.natwelch.com"
+        headers["Origin"] = "https://other.newyork.welch.io"
         status, _, _ = self.request("/api/pty/test/connect", headers)
         self.assertEqual(status, 403)
 
-    def test_oauth_start_uses_dedicated_app_and_secure_host_only_cookie(self):
-        status, headers, _ = self.request("/_auth/oauth2/opencode-github")
+    def test_oauth_start_reuses_existing_app_and_shared_secure_cookie(self):
+        status, headers, _ = self.request("/auth/oauth2/github", {"Host": "newyork.welch.io"})
         self.assertIn(status, [302, 303, 307])
         location = urllib.parse.urlparse(headers["Location"])
         self.assertEqual(location.netloc, "github.com")
         query = urllib.parse.parse_qs(location.query)
-        self.assertEqual(query["client_id"], ["test-opencode"])
+        self.assertEqual(query["client_id"], ["test"])
         callback = urllib.parse.urlparse(query["redirect_uri"][0])
-        self.assertEqual(callback.netloc, "opencode.natwelch.com")
-        self.assertEqual(callback.path, "/_auth/oauth2/opencode-github/authorization-code-callback")
-        self.assertEqual(query["scope"], ["user:email"])
+        self.assertEqual(callback.netloc, "newyork.welch.io")
+        self.assertEqual(callback.path, "/auth/oauth2/github/authorization-code-callback")
         cookie = headers["Set-Cookie"]
-        self.assertIn("__Host-opencode-", cookie)
+        self.assertIn("AUTHP_", cookie)
         self.assertIn("Secure", cookie)
         self.assertIn("HttpOnly", cookie)
-        self.assertNotIn("Domain=", cookie)
+        self.assertIn("Domain=newyork.welch.io", cookie)
 
 
 if __name__ == "__main__":

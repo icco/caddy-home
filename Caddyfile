@@ -19,9 +19,6 @@
 	metrics /metrics
 
 	security {
-		# Opted into by mist's OpenCode deployment; an unmatched glob is a no-op.
-		import {$OPENCODE_AUTH_CONFIG:disabled/*.caddy}
-
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
 
 		authentication portal myportal {
@@ -30,7 +27,10 @@
 
 			crypto key sign-verify {env.JWT_SHARED_KEY}
 			cookie domain newyork.welch.io
+			cookie samesite lax
+			cookie insecure off
 			enable identity provider github
+			trust login redirect uri domain exact opencode.newyork.welch.io path prefix /
 
 			transform user {
 				exact match sub github.com/icco
@@ -54,6 +54,7 @@
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
 					"Loans" /acntng/ icon "las la-hand-holding-usd"
+					"OpenCode" https://opencode.newyork.welch.io/ icon "las la-terminal"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -77,34 +78,36 @@
 			inject header "X-WEBAUTH-USER" from "sub"
 			inject header "X-WEBAUTH-EMAIL" from "email"
 		}
+
+		# Reuse the home portal's session, but not its broad user role or bypasses.
+		authorization policy opencode-policy {
+			set auth url https://newyork.welch.io/auth/oauth2/github
+			crypto key verify {env.JWT_SHARED_KEY}
+			allow roles authp/admin
+			set token sources cookie
+		}
 	}
 }
 
-# Imported by the OpenCode service's Docker label. Keep /_auth separate from
-# OpenCode's own /auth endpoints, and authorize every upstream request.
+# Imported by the OpenCode service's Docker label. The parent domain's GitHub
+# portal sets the shared cookie; every OpenCode path stays behind authorization.
 (opencode-github) {
 	route {
-		@portal path /_auth /_auth/*
-		handle @portal {
-			authenticate with opencode-portal
+		authorize with opencode-policy
+
+		# SameSite alone doesn't block requests from other welch.io services.
+		@cross_origin {
+			header Origin *
+			not header Origin https://opencode.newyork.welch.io
 		}
-		handle {
-			authorize with opencode-policy
+		respond @cross_origin "Forbidden" 403
 
-			# SameSite alone doesn't block requests from sibling natwelch.com sites.
-			@cross_origin {
-				header Origin *
-				not header Origin https://opencode.natwelch.com
-			}
-			respond @cross_origin "Forbidden" 403
-
-			reverse_proxy opencode:4096 {
-				flush_interval -1
-				# Replace client credentials only after GitHub authorization succeeds.
-				header_up Authorization "Basic {env.OPENCODE_BACKEND_AUTH}"
-				# OpenCode doesn't need the gateway's session token.
-				header_up -Cookie
-			}
+		reverse_proxy opencode:4096 {
+			flush_interval -1
+			# Replace client credentials only after GitHub authorization succeeds.
+			header_up Authorization "Basic {env.OPENCODE_BACKEND_AUTH}"
+			# OpenCode doesn't need the gateway's session token.
+			header_up -Cookie
 		}
 	}
 }

@@ -6,32 +6,32 @@ NOTE: currently the docker-compose is broken, so while it gives a rough idea of 
 
 ## OpenCode GitHub login
 
-OpenCode uses the existing `caddy-security` module, with a separate GitHub OAuth
-app and signing key. Only `github.com/icco` receives the `opencode/user` role;
-ordinary GitHub users and the home portal's tokens cannot access the backend.
-The one-hour cookies are Secure, HttpOnly, SameSite=Lax and host-only, with
-`__Host-` names. Requests with a foreign Origin are rejected before proxying,
-including WebSocket handshakes from sibling sites.
-
-This is opt-in: the current deployment can run the new image before activation.
-Set `OPENCODE_AUTH_CONFIG=/srv/opencode-auth.caddy` and these secret environment
-variables on Caddy:
-
-- `OPENCODE_OAUTH_CLIENT_ID` and `OPENCODE_OAUTH_CLIENT_SECRET`: a dedicated GitHub
-  OAuth app, with callback
-  `https://opencode.natwelch.com/_auth/oauth2/opencode-github/authorization-code-callback`.
-- `OPENCODE_JWT_SHARED_KEY`: a new random signing key, independent of `JWT_SHARED_KEY`.
-- `OPENCODE_BACKEND_AUTH`: base64 of `opencode:<backend password>`.
+OpenCode at `opencode.newyork.welch.io` reuses the existing GitHub app and
+`newyork.welch.io/auth` portal. The portal's `Domain=newyork.welch.io` cookie
+already covers this subdomain, so an existing login works for both sites. The
+OAuth callback stays on the parent domain; no new GitHub app is needed.
 
 The OpenCode service imports the `opencode-github` snippet via its Docker label.
-It routes `/_auth` to the portal and requires the dedicated role for every other
-path, including the API, native pairing endpoints, event streams and terminals.
-Caddy replaces upstream Authorization after that check and strips browser cookies.
-There are no metrics, health, Basic Auth or query-token bypasses in this policy.
+Its stricter policy accepts only `authp/admin`, which the portal grants only to
+`github.com/icco`. It does not reuse the home policy's general `authp/user` role
+or metrics bypasses. All OpenCode paths, including native `/auth` endpoints,
+event streams and terminals, require this check.
+
+Cookies are Secure, HttpOnly and SameSite=Lax, retaining the existing shared
+cookie scope and session lifetime. Foreign Origin headers are rejected before
+proxying, including WebSocket handshakes from other `welch.io` services. Caddy
+then replaces upstream Authorization and strips browser cookies. There are no
+Basic Auth, bearer-header or query-token bypasses.
+
+Set `OPENCODE_BACKEND_AUTH` on Caddy to base64 of `opencode:<backend password>`.
+The existing `JWT_SHARED_KEY` and `OAUTH_CLIENT_SECRET` must come from private
+deployment configuration; rotate the previously committed values before enabling
+OpenCode. Rotating the shared signing key signs existing portal sessions out.
 
 Deployment, secret generation and rollback are documented in
 [icco.me/mist/opencode](https://github.com/icco/icco.me/tree/main/mist/opencode).
-Publish this image before merging that repo's activation change. No new DNS,
+Publish this image before merging that repo's activation change. That PR adds
+the subdomain's DNS record and redirects the old OpenCode hostname. No new
 container or Caddy module is needed.
 
 ### Authentication regression checks
@@ -42,7 +42,7 @@ With a Caddy binary built using the versions/modules in `Dockerfile`:
 CADDY=/path/to/caddy python3 tests/test-opencode-auth.py
 ```
 
-This validates both deployment modes and runs the actual proxy against a local
+This validates the base config and imported route and runs the actual proxy against a local
 mock backend with disposable keys. It checks denied paths, credentials, token
 expiry, foreign origins and WebSocket handshakes. Completing GitHub login still
 requires the deployed OAuth app and a browser.
