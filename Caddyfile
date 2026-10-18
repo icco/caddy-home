@@ -26,7 +26,7 @@
 			cookie lifetime 172800
 
 			crypto key sign-verify {env.JWT_SHARED_KEY}
-			cookie domain newyork.welch.io
+			cookie domain welch.io
 			enable identity provider github
 
 			transform user {
@@ -45,6 +45,7 @@
 				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
+					"DMARC" https://dmarc.welch.io/ icon "las la-envelope"
 					"Files" /files/ icon "las la-sitemap"
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Grafana" /grafana/ icon "las la-chart-line"
