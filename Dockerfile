@@ -1,5 +1,5 @@
 # https://github.com/caddyserver/caddy/releases
-ARG CADDY_VERSION=2.11.3
+ARG CADDY_VERSION=2.11.7
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
 ENV GODEBUG=netdns=cgo
@@ -23,6 +23,8 @@ LABEL org.opencontainers.image.licenses=MIT
 
 ENV CADDY_INGRESS_NETWORKS=caddy
 ENV CADDY_DOCKER_CADDYFILE_PATH=/srv/Caddyfile
+
+RUN apk upgrade --no-cache ca-certificates ca-certificates-bundle
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY ./Caddyfile /srv/Caddyfile
