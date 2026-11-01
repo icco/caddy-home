@@ -54,7 +54,7 @@
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
-					"Romm" /romm/ icon "las la-gamepad"
+					"Romm" https://romm.welch.io/ icon "las la-gamepad"
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
 					"SlSkD" /slskd/ icon "las la-file-audio"
 					"Sonarr" /sonarr/ icon "las la-tv"
@@ -156,19 +156,11 @@ newyork.welch.io {
 		reverse_proxy rope.local:8001
 	}
 
+	# RomM requires its own hostname: its assets and API use root-relative URLs.
+	redir /romm https://romm.welch.io/ 301
 	route /romm/* {
-		encode zstd gzip
-
-		header * {
-			X-XSS-Protection "1; mode=block"
-			X-Frame-Options "SAMEORIGIN"
-			X-Robots-Tag "noindex, nofollow"
-			-Server
-			-X-Powered-By
-		}
-
 		uri strip_prefix /romm
-		reverse_proxy rope.local:7676
+		redir https://romm.welch.io{uri} 301
 	}
 
 	route /skyaware/* {
@@ -211,4 +203,20 @@ newyork.welch.io {
 
 		log_key
 	}
+}
+
+romm.welch.io {
+	log
+	encode zstd gzip
+
+	header {
+		X-XSS-Protection "1; mode=block"
+		X-Frame-Options "SAMEORIGIN"
+		X-Robots-Tag "noindex, nofollow"
+		-Server
+		-X-Powered-By
+	}
+
+	# Keep RomM's own authentication, as on the former /romm/ route.
+	reverse_proxy rope.local:7676
 }
