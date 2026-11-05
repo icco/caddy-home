@@ -1,5 +1,5 @@
 # https://github.com/caddyserver/caddy/releases
-ARG CADDY_VERSION=2.11.7
+ARG CADDY_VERSION=2.11.8
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
 ENV GODEBUG=netdns=cgo
@@ -11,8 +11,8 @@ RUN apk add --no-cache gcc musl-dev
 # https://github.com/greenpau/caddy-security/releases
 # https://github.com/mholt/caddy-ratelimit/releases
 RUN xcaddy build ${CADDY_VERSION} \
-    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.12.0 \
-    --with github.com/greenpau/caddy-security@v1.1.62 \
+    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \
+    --with github.com/greenpau/caddy-security@v1.6.2 \
     --with github.com/mholt/caddy-ratelimit
 
 FROM caddy:${CADDY_VERSION}-alpine
