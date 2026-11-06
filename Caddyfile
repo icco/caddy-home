@@ -16,9 +16,7 @@
 		format json
 	}
 
-	metrics {
-		per_host
-	}
+	metrics
 
 	security {
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
