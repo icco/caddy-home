@@ -16,7 +16,9 @@
 		format json
 	}
 
-	metrics /metrics
+	metrics {
+		per_host
+	}
 
 	security {
 		oauth identity provider github {env.OAUTH_CLIENT_ID} {env.OAUTH_CLIENT_SECRET}
@@ -63,9 +65,6 @@
 		}
 
 		authorization policy mypolicy {
-			bypass uri prefix /metrics
-			bypass uri prefix /grafana/metrics
-
 			set auth url {$OAUTH_AUTH_URL}
 			crypto key verify {env.JWT_SHARED_KEY}
 			allow roles authp/admin authp/user
@@ -219,4 +218,9 @@ romm.welch.io {
 
 	# Keep RomM's own authentication, as on the former /romm/ route.
 	reverse_proxy rope.local:7676
+}
+
+# Not published on the host, so only other containers can scrape it.
+http://:9180 {
+	metrics /metrics
 }
