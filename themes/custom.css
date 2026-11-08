@@ -1,37 +1,23 @@
-html,
-body {
-  background-color: Canvas !important;
-  color: CanvasText;
-  color-scheme: light dark;
+body.basic-theme {
+  --brand-page: #242933;
+  --brand-page-image: none;
+  --brand-surface: #2e3440;
+  --brand-soft: #4c566a;
+  --brand-ink: #eceff4;
+  --brand-muted: #d8dee9;
+  --brand-primary: #88c0d0;
+  --brand-on-primary: #2e3440;
+  --brand-primary-hover: #8fbcbb;
+  --brand-border: #4c566a;
+  --brand-control-border: #d8dee9;
+  --brand-focus: #88c0d0;
+  --brand-shadow: none;
+  --brand-banner-image: none;
+  color-scheme: dark;
 }
 
-.app-content {
-  margin-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.app-container {
-  background-color: #2e3440;
-  border: 1px solid #ccc;
-  box-shadow: none;
-  color: #e5e9f0;
-}
-
-.app-login-btn-img,
-.app-login-btn-txt,
-.app-login-btn-txt:hover,
-.app-portal-btn-img,
-.app-portal-btn-txt,
-.app-portal-btn-txt:hover
-{
-  background-color: #4c566a;
-  color: #eceff4;
-}
-
-.logo-col-txt, .app-inp-lbl, .logo-txt {
-  color: #e5e9f0;
-}
-
-#bookmarks, .app-inp-lbl {
+.basic-theme .brand-banner,
+.basic-theme .app-inp-lbl,
+#bookmarks {
   display: none;
 }
