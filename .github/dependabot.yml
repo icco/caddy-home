@@ -24,3 +24,15 @@ updates:
       prefix: chore(deps)
     cooldown:
       default-days: 7
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      gomod:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: chore(deps)
+    cooldown:
+      default-days: 7

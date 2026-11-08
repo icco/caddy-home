@@ -17,6 +17,7 @@ docker build -t caddy-home .      # Build container image
 ## Architecture & Layout
 
 - `Caddyfile` — Main Caddy reverse proxy rules, upstream routes, and domain configurations.
+- `main.go` / `go.mod` — Custom Caddy build; plugin and Caddy versions live in `go.mod` so Dependabot tracks them.
 - `Dockerfile` / `docker-compose.yml` — Containerization setup for deploying Caddy.
 
 ## Conventions
