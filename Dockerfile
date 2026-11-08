@@ -1,24 +1,20 @@
-# https://github.com/caddyserver/caddy/releases
-ARG CADDY_VERSION=2.11.9
-FROM caddy:${CADDY_VERSION}-builder AS builder
+FROM golang:1.27.3-alpine AS builder
 
 ENV GODEBUG=netdns=cgo
 ENV CGO_ENABLED=1
 
 RUN apk add --no-cache gcc musl-dev
 
-# https://github.com/lucaslorentz/caddy-docker-proxy/releases
-# https://github.com/greenpau/caddy-security/releases
-# https://github.com/mholt/caddy-ratelimit/releases
-RUN xcaddy build ${CADDY_VERSION} \
-    --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \
-    --with github.com/greenpau/caddy-security@v1.6.2 \
-    --with github.com/mholt/caddy-ratelimit@5625512f24f6f59d6f64fb3aafe5eecff0b286db
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY main.go ./
+RUN go build -trimpath -ldflags "-w -s" -o /usr/bin/caddy .
 
-FROM caddy:${CADDY_VERSION}-alpine
+FROM caddy:2.11.9-alpine
 
 LABEL org.opencontainers.image.source=https://github.com/icco/caddy-home
-LABEL org.opencontainers.image.description="Caddy reverse proxy for icco's home server; custom xcaddy build with caddy-docker-proxy, caddy-security, and caddy-ratelimit modules."
+LABEL org.opencontainers.image.description="Caddy reverse proxy for icco's home server; custom build with caddy-docker-proxy, caddy-security, and caddy-ratelimit modules."
 LABEL org.opencontainers.image.licenses=MIT
 
 ENV CADDY_INGRESS_NETWORKS=caddy
