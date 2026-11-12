@@ -58,6 +58,7 @@
 					"Sabnzbd" /sabnzbd/ icon "las la-download"
 					"SlSkD" /slskd/ icon "las la-file-audio"
 					"Sonarr" /sonarr/ icon "las la-tv"
+					"Tracker Tracker" https://trackers.welch.io/ icon "las la-chart-bar"
 				}
 			}
 		}
@@ -160,6 +161,13 @@ newyork.welch.io {
 		redir https://romm.welch.io{uri} 301
 	}
 
+	# Tracker Tracker has no sub-path support: Next.js fixes basePath at build time.
+	redir /trackers https://trackers.welch.io/ 301
+	route /trackers/* {
+		uri strip_prefix /trackers
+		redir https://trackers.welch.io{uri} 301
+	}
+
 	route /skyaware/* {
 		authorize with mypolicy
 		reverse_proxy 192.168.1.51:80
@@ -216,6 +224,20 @@ romm.welch.io {
 
 	# Keep RomM's own authentication, as on the former /romm/ route.
 	reverse_proxy rope.local:7676
+}
+
+trackers.welch.io {
+	log
+	encode zstd gzip
+
+	header {
+		X-Robots-Tag "noindex, nofollow"
+		-Server
+		-X-Powered-By
+	}
+
+	# The portal cookie is scoped to newyork.welch.io, so the app keeps its own login.
+	reverse_proxy rope.local:3131
 }
 
 # Not published on the host, so only other containers can scrape it.
