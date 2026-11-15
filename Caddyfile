@@ -45,12 +45,14 @@
 				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
+					"Autobrr" /autobrr/ icon "las la-rss"
 					"Files" /files/ icon "las la-sitemap"
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Grafana" /grafana/ icon "las la-chart-line"
 					"Kavita" /kavita/ icon "las la-book"
 					"Lidarr" /lidarr/ icon "las la-headphones"
 					"Loans" /acntng/ icon "las la-hand-holding-usd"
+					"Netronome" /netronome/ icon "las la-tachometer-alt"
 					"Prowlarr" /prowlarr/ icon "las la-paw"
 					"Radarr" /radarr/ icon "las la-film"
 					"Readarr" /readarr/ icon "las la-book"
@@ -118,6 +120,16 @@ newyork.welch.io {
 	route /sabnzbd/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:8080
+	}
+
+	route /autobrr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:7474
+	}
+
+	route /netronome/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:7575
 	}
 
 	route /kavita/* {
