@@ -45,6 +45,7 @@
 				# https://icons8.com/line-awesome
 				links {
 					"Archive Team Warrior" /archive/ icon "las la-dragon"
+					"Dashbrr" /dashbrr/ icon "las la-heartbeat"
 					"Files" /files/ icon "las la-sitemap"
 					"FlightAware" /skyaware/ icon "las la-plane-departure"
 					"Grafana" /grafana/ icon "las la-chart-line"
@@ -119,6 +120,11 @@ newyork.welch.io {
 	route /sabnzbd/* {
 		authorize with mypolicy
 		reverse_proxy rope.local:8080
+	}
+
+	route /dashbrr/* {
+		authorize with mypolicy
+		reverse_proxy rope.local:8585
 	}
 
 	route /netronome/* {
